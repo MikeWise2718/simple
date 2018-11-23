@@ -33,11 +33,12 @@ public class TouchCamera : MonoBehaviour {
 			}
 			else {
                 var camera = GetComponent<Camera>();
-				Vector2 newTouchPosition = Input.GetTouch(0).position;
+				Vector2 newPos = Input.GetTouch(0).position;
+
+                var delt = (Vector3)((oldPos[0] - newPos) * camera.orthographicSize / camera.pixelHeight * 2f);
+                transform.position += transform.TransformDirection(delt);
 				
-				transform.position += transform.TransformDirection((Vector3)((oldPos[0] - newTouchPosition) * camera.orthographicSize / camera.pixelHeight * 2f));
-				
-				oldPos[0] = newTouchPosition;
+				oldPos[0] = newPos;
 			}
 		}
 		else {
@@ -57,10 +58,14 @@ public class TouchCamera : MonoBehaviour {
 				};
 				Vector2 newVec = newPos[0] - newPos[1];
 				float newDist = newVec.magnitude;
-				transform.position += transform.TransformDirection((Vector3)((oldPos[0] + oldPos[1] - screen) * camera.orthographicSize / screen.y));
+                var delt0 = (Vector3)((oldPos[0] + oldPos[1] - screen) * camera.orthographicSize / screen.y);
+
+                transform.position += transform.TransformDirection(delt0);
 				transform.localRotation *= Quaternion.Euler(new Vector3(0, 0, Mathf.Asin(Mathf.Clamp((oldVec.y * newVec.x - oldVec.x * newVec.y) / oldDist / newDist, -1f, 1f)) / 0.0174532924f));
 				camera.orthographicSize *= oldDist / newDist;
-				transform.position -= transform.TransformDirection((newPos[0] + newPos[1] - screen) * camera.orthographicSize / screen.y);
+                var delt1 = (newPos[0] + newPos[1] - screen) * camera.orthographicSize / screen.y;
+
+                transform.position -= transform.TransformDirection(delt1);
 
 				oldPos[0] = newPos[0];
 				oldPos[1] = newPos[1];
