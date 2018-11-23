@@ -12,8 +12,19 @@ public class TouchCamera : MonoBehaviour
     Vector3 oriPos;
     Quaternion oriRot;
 
+    string msg;
+    private void OnGUI()
+    {
+        float x = 0;
+        float y = 0;
+        GUI.Label(new Rect(x, y, 120, 100), msg);
+    }
+
     void Update()
     {
+        var camera = GetComponent<Camera>();
+        Vector2 screen = new Vector2(camera.pixelWidth, camera.pixelHeight);
+        var cfak = camera.orthographicSize / camera.pixelHeight;
         if (updatecount == 0)
         {
             // initialize original position
@@ -41,10 +52,10 @@ public class TouchCamera : MonoBehaviour
             }
             else
             {
-                var camera = GetComponent<Camera>();
                 Vector2 newPos = Input.GetTouch(0).position;
 
-                var delt = (Vector3)((oldPos[0] - newPos) * camera.orthographicSize / camera.pixelHeight * 2f);
+
+                var delt = (Vector3)((oldPos[0] - newPos) * cfak * 2f);
                 transform.position += transform.TransformDirection(delt);
 
                 oldPos[0] = newPos;
@@ -61,9 +72,6 @@ public class TouchCamera : MonoBehaviour
             }
             else
             {
-                var camera = GetComponent<Camera>();
-                Vector2 screen = new Vector2(camera.pixelWidth, camera.pixelHeight);
-
                 Vector2[] newPos = {
                     Input.GetTouch(0).position,
                     Input.GetTouch(1).position
@@ -71,7 +79,7 @@ public class TouchCamera : MonoBehaviour
                 Vector2 newVec = newPos[0] - newPos[1];
                 float newDist = newVec.magnitude;
 
-                Vector3 deltold = (Vector3)((oldPos[0] + oldPos[1] - screen) * camera.orthographicSize / screen.y);
+                Vector3 deltold = (Vector3)((oldPos[0] + oldPos[1] - screen) * cfak);
                 transform.position += transform.TransformDirection(deltold);
 
                 float clampToOne = Mathf.Clamp((oldVec.y * newVec.x - oldVec.x * newVec.y) / oldDist / newDist, -1f, 1f);
@@ -79,7 +87,7 @@ public class TouchCamera : MonoBehaviour
                 transform.localRotation *= Quaternion.Euler(new Vector3(0, 0, zrot));
 
                 camera.orthographicSize *= oldDist / newDist;
-                Vector2 deltnew = (newPos[0] + newPos[1] - screen) * camera.orthographicSize / screen.y;
+                Vector2 deltnew = (newPos[0] + newPos[1] - screen) * cfak;
                 transform.position -= transform.TransformDirection(deltnew);
 
                 oldPos[0] = newPos[0];
@@ -89,5 +97,7 @@ public class TouchCamera : MonoBehaviour
             }
         }
         updatecount++;
+
+        msg = "tc:"+Input.touchCount.ToString()+ " cos:"+ camera.orthographicSize + " pixy:"+ camera.pixelHeight+ "  cfak:"+cfak;
     }
 }
