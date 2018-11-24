@@ -25,7 +25,7 @@ public class TouchCamera : MonoBehaviour
                 float y = 0;
                 if (msg[i] != "")
                 {
-                    GUI.Label(new Rect(x, y + i * 30, 200, 100), msg[i]);// needs to be wide enough or it will break lines
+                    GUI.Label(new Rect(x, y + i * 30, 300, 100), msg[i]);// needs to be wide enough or it will break lines
                 }
             }
         }
@@ -84,20 +84,22 @@ public class TouchCamera : MonoBehaviour
                     {
                         oldPos[0] = Input.GetTouch(0).position;
                         oldPos[1] = null;
+                        msg[1] = pfix + " finger new 1 nulled";
                     }
                     else
                     {
                         Vector2 newPos = Input.GetTouch(0).position;
 
 
-                        var delt = (Vector3)((oldPos[0] - newPos) * cfak * 2f);
-                        var vec = camera.transform.forward * 20 - camera.transform.position;
-                        //transform.loc
-                        transform.position += transform.TransformDirection(delt);
-
+                        //var delt = (Vector3)((oldPos[0] - newPos) * cfak * 10f);
+                        var delt = (Vector3)((oldPos[0] - newPos));
+                        var point = transform.forward*10 + transform.position;
+//                        point = Vector3.zero;
+                        transform.RotateAround(point, new Vector3(0.0f, 1.0f, 0.0f), delt.x);
+                        transform.RotateAround(point, new Vector3(1.0f, 0.0f, 0.0f), delt.y);
                         oldPos[0] = newPos;
+                        msg[1] = pfix + " finger new 1 " + point;
                     }
-                    msg[1] = pfix + " finger 1";
                     break;
                 }
             case 2:
