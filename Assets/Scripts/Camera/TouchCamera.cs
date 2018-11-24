@@ -92,11 +92,10 @@ public class TouchCamera : MonoBehaviour
 
 
                         //var delt = (Vector3)((oldPos[0] - newPos) * cfak * 10f);
-                        var delt = (Vector3)((oldPos[0] - newPos));
+                        var delt = oldPos[0] - newPos;
                         var point = transform.forward*10 + transform.position;
-//                        point = Vector3.zero;
-                        transform.RotateAround(point, new Vector3(0.0f, 1.0f, 0.0f), delt.x);
-                        transform.RotateAround(point, new Vector3(1.0f, 0.0f, 0.0f), delt.y);
+                        transform.RotateAround(point, new Vector3(0.0f, 1.0f, 0.0f), delt.Value.x);
+                        transform.RotateAround(point, new Vector3(1.0f, 0.0f, 0.0f), delt.Value.y);
                         oldPos[0] = newPos;
                         msg[1] = pfix + " finger new 1 " + point;
                     }
